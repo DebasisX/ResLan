@@ -1,0 +1,107 @@
+{
+    "name": "DEBASIS SIKDAR",
+    "title": "AI/ML Software Engineer",
+    "address": "Airport Gate No. 1, Kolkata: 700028, India",
+    "phone": "+91 7477333298",
+    "email": "debasis.sikder123@gmail.com",
+    "github": "https://github.com/yourusername",
+    "leetcode": "https://leetcode.com/yourusername",
+    "linkedin": "https://linkedin.com/in/yourusername",
+  
+    "work_experience": [
+      {
+        "company": "Code Social",
+        "date": "Apr 2023 – Oct 2023",
+        "position": "Community Manager",
+        "location": "Remote",
+        "bullets": [
+          "Mentored 5,000+ community members, resulting in a 15% increase in participation",
+          "Organized 5+ events and competitions, enhancing community engagement"
+        ]
+      },
+      {
+        "company": "GirlScript Summer of Code",
+        "date": "May 2024 – Jul 2024",
+        "position": "Open-Source Contributor",
+        "location": "Remote",
+        "bullets": [
+          "Delivered a successful Level 3 pull request in GSSoC, enhancing project functionality",
+          "Containerized the application, streamlining deployment"
+        ]
+      },
+      {
+        "company": "UiPath Community KIIT",
+        "date": "Jan 2025 – Present",
+        "position": "Development Team Lead",
+        "location": "Blubaneswar, Odisha",
+        "bullets": [
+          "Preparing teams for hackathons, driving collaboration and innovation",
+          "Developing impactful projects based on problem statements"
+        ]
+      }
+    ],
+  
+    "education": {
+      "institution": "Kalinga Institute of Industrial Technology",
+      "degree": "B.Tech. Computer Science & Engineering",
+      "duration": "Aug 2022 – Jul 2026",
+      "location": "Blubaneswar, Odisha",
+      "gpa": "7.97"
+    },
+  
+    "skills": [
+      "Python", "C", "C++", "Java", "MySQL", "MongoDB",
+      "SQLite3", "HTML", "CSS", "Bootstrap", "React.js",
+      "Flask", "Django", "RestAPI", "Scikit-learn",
+      "TensorFlow", "ML Libraries", "Docker"
+    ],
+  
+    "projects": [
+      {
+        "name": "ML Model for Hyperspace Classification",
+        "bullets": [
+          "Developed multi-featured classification model using adaptive range-based classification",
+          "Beats k-NN algorithm in runtime by 10% with reliable accuracy"
+        ]
+      },
+      {
+        "name": "Finance",
+        "bullets": [
+          "Developed real-time stock trading web application for successful trade execution"
+        ]
+      },
+      {
+        "name": "DecisionHub",
+        "bullets": [
+          "Created web application for financial analysts to create customized interest rate rules"
+        ]
+      },
+      {
+        "name": "Note Ninja",
+        "bullets": [
+          "Summarizes meeting document transcripts and real-time meeting audio into concise insights"
+        ]
+      }
+    ],
+  
+    "certifications": [
+      "CS50X: Introduction to Computer Science (Harvard University)",
+      "CS50A1: Introduction to Artificial Intelligence (Harvard University)"
+    ],
+  
+    "achievements": [
+      "Ranked 1644 AIR (96.4%) in KIIT University’s Entrance Exam (June 2022)",
+      "Ranked AIR 650 in CodeKaze '24 - India’s Biggest Hiring Contest (October 2024)",
+      "3rd position in Hack-a-Bot (2024): AI-based Resume Ranker using UiPath Studio",
+      "SIH '23 & '24 Qualifier: Tinnitus frequency identification & Sign Language recognition"
+    ]
+  }
+
+
+
+  # ResLan
+A high -level JSON language to create ATS - friendly Resume with perfect control. Currently supports PDF.
+
+
+# To use:
+python resume.py your_json_code.json output_filename.pdf
