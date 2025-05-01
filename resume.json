@@ -99,9 +99,3 @@
 
 
 
-  # ResLan
-A high -level JSON language to create ATS - friendly Resume with perfect control. Currently supports PDF.
-
-
-# To use:
-python resume.py your_json_code.json output_filename.pdf
