@@ -1,265 +1,321 @@
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from reportlab.lib.units import inch
-from reportlab.lib.colors import HexColor, black
+from reportlab.lib.colors import black
 import json
 import argparse
 import textwrap
 
 def create_resume(json_file, output_file):
-    # loading the JSON data
+    # JSON data + validation
     with open(json_file) as f:
         data = json.load(f)
-
+    
+    if "name" not in data:
+        raise ValueError("Resume must contain a 'name' field")
+    
     c = canvas.Canvas(output_file, pagesize=letter)
     width, height = letter
     
-    # margins and spacing
+    # Layout configuration
     left_margin = 0.75 * inch
     right_margin = width - 0.75 * inch
     y_position = height - 0.75 * inch
-    line_height = 12
-    
-    # ---------- Header ----------
-    # 1. Name (centered, large, bold)
-    c.setFont("Helvetica-Bold", 24)
-    name_width = c.stringWidth(data["name"], "Helvetica-Bold", 24)
-    c.drawString((width - name_width)/2, y_position, data["name"])
-    y_position -= line_height * 1.5
-
-    # 2. Role (centered, smaller, bold)
-    if "title" in data:
-        c.setFont("Helvetica-Bold", 14)
-        role_width = c.stringWidth(data["title"], "Helvetica-Bold", 14)
-        c.drawString((width - role_width)/2, y_position, data["title"])
-        y_position -= line_height * 1.5
-
-    # 3. Social links (centered, clickable)
-    social_links = []
-    if "github" in data:
-        social_links.append(("GitHub", data["github"]))
-    if "leetcode" in data:
-        social_links.append(("LeetCode", data["leetcode"])) 
-    if "linkedin" in data:
-        social_links.append(("LinkedIn", data["linkedin"]))
-
-    if social_links:
-        c.setFont("Helvetica", 10)
-        c.setFillColor(HexColor("#0000FF"))  # Blue for links
-        
-        # Calculated total width of all social links with spacing
-        total_width = sum(c.stringWidth(text, "Helvetica", 10) for text, _ in social_links)
-        total_width += 20 * (len(social_links)-1)  # space between links
-        
-        x_start = (width - total_width)/2
-        
-        for text, url in social_links:
-            text_width = c.stringWidth(text, "Helvetica", 10)
-            # Drawing clickable link
-            c.drawString(x_start, y_position, text)
-            c.linkURL(url, (x_start, y_position, x_start + text_width, y_position + line_height))
-            x_start += text_width + 20  # Added spacing between links
-        
-        c.setFillColor(black)  # Reset color
-        y_position -= line_height * 1.5
-
-    # 4. Contact info (address • phone • email in one line)
-    contact_items = []
-    if "address" in data:
-        contact_items.append(data["address"])
-    if "phone" in data:
-        contact_items.append(data["phone"])
-    if "email" in data:
-        contact_items.append(data["email"])
-
-    if contact_items:
-        c.setFont("Helvetica", 10)
-        contact_str = " • ".join(contact_items)
-        
-        # Wrap if too long
-        if c.stringWidth(contact_str, "Helvetica", 10) > (width - 1.5*inch):
-            contact_lines = textwrap.wrap(contact_str, width=60)
-            for line in contact_lines:
-                line_width = c.stringWidth(line, "Helvetica", 10)
-                c.drawString((width - line_width)/2, y_position, line)
-                y_position -= line_height
-        else:
-            line_width = c.stringWidth(contact_str, "Helvetica", 10)
-            c.drawString((width - line_width)/2, y_position, contact_str)
-            y_position -= line_height
-        
-        y_position -= line_height * 0.5
-
-    # ---------- Sections ----------
-    def draw_section(title):
+    line_height = 14
+    def check_space(lines_needed=1):
         nonlocal y_position
-        if y_position < 1.5 * inch:  # for page break
+        required_space = lines_needed * line_height
+        if (y_position - required_space) < (0.75 * inch):  # space check
             c.showPage()
             y_position = height - 0.75 * inch
-        
-        c.setFont("Helvetica-Bold", 14)
-        c.drawString(left_margin, y_position, title.upper())
-        c.line(left_margin, y_position-2, right_margin, y_position-2)
+        return y_position
+
+    # ---------- Header Section ----------
+    check_space(4)
+    c.setFont("Helvetica-Bold", 24)
+    name = data["name"]
+    name_width = c.stringWidth(name, "Helvetica-Bold", 24)
+    c.drawString((width - name_width)/2, y_position, name)
+    y_position -= line_height * 1.5  # Increased spacing
+
+    # Title (optional)
+    if data.get("title"):
+        check_space(2)
+        c.setFont("Helvetica-Bold", 16)  # Larger font size
+        title = data["title"]
+        title_width = c.stringWidth(title, "Helvetica-Bold", 16)
+        c.drawString((width - title_width)/2, y_position, title)
         y_position -= line_height * 1.5
+
+    # Social Links (optional)
+    social_links = [
+        ("GitHub", data.get("github")),
+        ("LeetCode", data.get("leetcode")),
+        ("LinkedIn", data.get("linkedin"))
+    ]
+    social_links = [ (t, u) for t, u in social_links if u ]
+    
+    if social_links:
+        check_space(2)
+        c.setFont("Helvetica", 11)  # Slightly larger font
+        total_width = sum(c.stringWidth(t, "Helvetica", 11) for t, _ in social_links)
+        total_width += 20 * (len(social_links)-1)
+        x_start = (width - total_width)/2
+        
+        for i, (text, url) in enumerate(social_links):
+            text_width = c.stringWidth(text, "Helvetica", 11)
+            c.drawString(x_start, y_position, text)
+            c.linkURL(url, (x_start, y_position, x_start + text_width, y_position + line_height))
+            x_start += text_width
+            if i < len(social_links) - 1:
+                dot = " • "
+                dot_width = c.stringWidth(dot, "Helvetica", 11)
+                c.drawString(x_start, y_position, dot)
+                x_start += dot_width
+
+        
+        y_position -= line_height * 1.5
+
+    # (optional)
+    contact_items = [
+        data.get("address"),
+        data.get("phone"),
+        data.get("email")
+    ]
+    contact_items = [ci for ci in contact_items if ci]
+    
+    if contact_items:
+        check_space(3)
+        c.setFont("Helvetica", 11)
+        contact_str = " • ".join(contact_items)
+        
+        if c.stringWidth(contact_str, "Helvetica", 11) > (width - 1.5*inch):
+            lines = textwrap.wrap(contact_str, width=60)
+        else:
+            lines = [contact_str]
+        
+        for line in lines:
+            line_width = c.stringWidth(line, "Helvetica", 11)
+            c.drawString((width - line_width)/2, y_position, line)
+            y_position -= line_height
+        
+        y_position -= line_height * 0.75  # spacing
+
+    # ---------- Section Rendering ----------
+    def draw_section(title):
+        nonlocal y_position
+        check_space(3)
+        c.setFont("Helvetica-Bold", 16)  # large section titles
+        c.drawString(left_margin, y_position, title.upper())
+        c.line(left_margin, y_position-4, right_margin, y_position-4)  # thick line
+        y_position -= line_height * 1.5  # space after section header
 
     # ---------- Professional Summary ----------
-    if 'professional_summary' in data:
+    if data.get("professional_summary"):
         draw_section("Professional Summary")
-        c.setFont("Helvetica", 10)
-        summary = data['professional_summary']
-        wrapped = textwrap.wrap(summary, width=80)
-        for line in wrapped:
-            if y_position < 1.5 * inch:
-                c.showPage()
-                y_position = height - 0.75 * inch
+        c.setFont("Helvetica", 11)
+        summary = data["professional_summary"]
+        for line in textwrap.wrap(summary, width=80):
+            check_space()
             c.drawString(left_margin, y_position, line)
             y_position -= line_height
-        y_position -= line_height * 0.5
+        y_position -= line_height * 0.75
 
-    # ---------- Skills ----------
-    if 'skills' in data:
+# ---------- Skills ----------
+    if data.get("skills"):
         draw_section("Skills")
-        c.setFont("Helvetica", 10)
-        skills_text = " • ".join(data["skills"])
-        if c.stringWidth(skills_text, "Helvetica", 10) > (width - 1.5*inch):
-            skills_lines = textwrap.wrap(skills_text, width=80)
-            for line in skills_lines:
-                c.drawString(left_margin, y_position, line)
-                y_position -= line_height
+        c.setFont("Helvetica", 11)
+        skills_text = ", ".join(data["skills"])  # replaced • with ,
+        if c.stringWidth(skills_text, "Helvetica", 11) > (width - 1.5*inch):
+            lines = textwrap.wrap(skills_text, width=80)
         else:
-            c.drawString(left_margin, y_position, skills_text)
+            lines = [skills_text]
+        
+        for line in lines:
+            check_space()
+            c.drawString(left_margin, y_position, line)
             y_position -= line_height
-        y_position -= line_height * 0.5
+        
+        y_position -= line_height * 0.75
+
 
     # ---------- Work Experience ----------
-    if 'work_experience' in data:
+    work_exp_entries = data.get("work_experience", [])
+    if work_exp_entries:
         draw_section("Work Experience")
-        for exp in data["work_experience"]:
-            # Company and date
-            c.setFont("Helvetica-Bold", 12)
-            c.drawString(left_margin, y_position, exp["company"])
-            date_width = c.stringWidth(exp["date"], "Helvetica-Bold", 12)
-            c.drawString(right_margin - date_width, y_position, exp["date"])
-            y_position -= line_height
+        
+        for exp in work_exp_entries:
+            if not all(key in exp for key in ["company", "position"]):
+                continue
             
-            # Position and location
-            c.setFont("Helvetica-Oblique", 10)
-            c.drawString(left_margin, y_position, exp["position"])
-            loc_width = c.stringWidth(exp["location"], "Helvetica-Oblique", 10)
-            c.drawString(right_margin - loc_width, y_position, exp["location"])
-            y_position -= line_height * 1.5
+            check_space(4)
+            # Company & Date
+            c.setFont("Helvetica-Bold", 13)
+            company = exp["company"]
+            date = exp.get("date", "")
+            date_width = c.stringWidth(date, "Helvetica-Bold", 13)
+            c.drawString(left_margin, y_position, company)
+            c.drawString(right_margin - date_width, y_position, date)
+            y_position -= line_height * 1.2
             
-            # Bullet points
-            c.setFont("Helvetica", 10)
-            for bullet in exp["bullets"]:
-                if y_position < 1.5 * inch:
-                    c.showPage()
-                    y_position = height - 0.75 * inch
+            # Position & Location
+            c.setFont("Helvetica", 11)
+            position = exp["position"]
+            location = exp.get("location", "")
+            loc_width = c.stringWidth(location, "Helvetica", 11)
+            c.drawString(left_margin, y_position, position)
+            c.drawString(right_margin - loc_width, y_position, location)
+            y_position -= line_height * 1.2
+            
+            for bullet in exp.get("bullets", []):
+                check_space(2)
                 wrapped = textwrap.wrap(bullet, width=80)
                 c.drawString(left_margin + 0.2*inch, y_position, "• " + wrapped[0])
                 y_position -= line_height
                 for line in wrapped[1:]:
+                    check_space()
                     c.drawString(left_margin + 0.4*inch, y_position, line)
                     y_position -= line_height
-            y_position -= line_height * 0.5
+            
+            y_position -= line_height * 0.75
 
     # ---------- Education ----------
-    if 'education' in data:
-        draw_section("Education")
-        c.setFont("Helvetica-Bold", 12)
-        c.drawString(left_margin, y_position, data["education"]["institution"])
-        date_width = c.stringWidth(data["education"]["duration"], "Helvetica-Bold", 12)
-        c.drawString(right_margin - date_width, y_position, data["education"]["duration"])
-        y_position -= line_height
-        
-        c.setFont("Helvetica-Oblique", 10)
-        c.drawString(left_margin, y_position, data["education"]["degree"])
-        loc_width = c.stringWidth(data["education"]["location"], "Helvetica-Oblique", 10)
-        c.drawString(right_margin - loc_width, y_position, data["education"]["location"])
-        y_position -= line_height
-        
-        c.setFont("Helvetica", 10)
-        c.drawString(left_margin, y_position, f"GPA: {data['education']['gpa']}")
-        y_position -= line_height * 1.5
+    if data.get("education"):
+        edu = data["education"]
+        if all(key in edu for key in ["institution", "degree", "duration"]):
+            draw_section("Education")
+            
+            check_space(4)
+            c.setFont("Helvetica-Bold", 13)
+            c.drawString(left_margin, y_position, edu["institution"])
+            duration = edu["duration"]
+            date_width = c.stringWidth(duration, "Helvetica-Bold", 13)
+            c.drawString(right_margin - date_width, y_position, duration)
+            y_position -= line_height * 1.2
+            
+            c.setFont("Helvetica-Oblique", 11)
+            c.drawString(left_margin, y_position, edu["degree"])
+            location = edu.get("location", "")
+            loc_width = c.stringWidth(location, "Helvetica-Oblique", 11)
+            c.drawString(right_margin - loc_width, y_position, location)
+            y_position -= line_height * 1.2
+            
+            if edu.get("gpa"):
+                c.setFont("Helvetica", 11)
+                c.drawString(left_margin, y_position, f"GPA: {edu['gpa']}")
+                y_position -= line_height
+            
+            y_position -= line_height * 0.75
 
     # ---------- Projects ----------
-    if 'projects' in data:
+    projects = data.get("projects", [])
+    if projects:
         draw_section("Projects")
-        for proj in data["projects"]:
-            # Project name with optional link
-            c.setFont("Helvetica-Bold", 12)
-            if 'link' in proj and proj['link']:
-                c.setFillColor(HexColor("#0000FF"))
-                c.drawString(left_margin, y_position, proj["name"])
-                text_width = c.stringWidth(proj["name"], "Helvetica-Bold", 12)
-                c.linkURL(proj['link'], (left_margin, y_position, 
-                                   left_margin + text_width, y_position + line_height))
-            else:
-                c.setFillColor(black)
-                c.drawString(left_margin, y_position, proj["name"])
-            c.setFillColor(black)
-            y_position -= line_height * 1.5
+        projects_section_drawn = True
+        
+        for proj in projects:
+            if "name" not in proj:
+                continue
+            
+            check_space(4)
+            c.setFont("Helvetica-Bold", 13)
+            name = proj["name"]
+            c.drawString(left_margin, y_position, name)
+            if proj.get("link"):
+                text_width = c.stringWidth(name, "Helvetica-Bold", 13)
+                c.linkURL(proj["link"], (left_margin, y_position, 
+                                    left_margin + text_width, y_position + line_height))
+            
+            y_position -= line_height * 1.2
             
             # Bullet points
-            c.setFont("Helvetica", 10)
-            for bullet in proj["bullets"]:
-                if y_position < 1.5 * inch:
-                    c.showPage()
-                    y_position = height - 0.75 * inch
+            c.setFont("Helvetica", 11)
+            for bullet in proj.get("bullets", []):
+                check_space(2)
                 wrapped = textwrap.wrap(bullet, width=80)
                 c.drawString(left_margin + 0.2*inch, y_position, "• " + wrapped[0])
                 y_position -= line_height
                 for line in wrapped[1:]:
+                    check_space()
                     c.drawString(left_margin + 0.4*inch, y_position, line)
                     y_position -= line_height
-            y_position -= line_height * 0.5
+            
+            y_position -= line_height * 0.75
+
+    # ---------- Achievements ----------
+    if data.get("achievements"):
+        draw_section("Achievements")
+        c.setFont("Helvetica", 11)
+        
+        for achievement in data["achievements"]:
+            check_space(2)
+            wrapped = textwrap.wrap(achievement, width=80)
+            c.drawString(left_margin + 0.2*inch, y_position, "• " + wrapped[0])
+            y_position -= line_height
+            for line in wrapped[1:]:
+                check_space()
+                c.drawString(left_margin + 0.4*inch, y_position, line)
+                y_position -= line_height
+        
+        y_position -= line_height * 0.75
 
     # ---------- Certifications ----------
-    if 'certifications' in data:
+    if data.get("certifications"):
         draw_section("Certifications")
-        c.setFont("Helvetica", 10)
-        c.setFillColor(HexColor("#0000FF"))  # links
+        c.setFont("Helvetica", 11)
+        
         for cert in data["certifications"]:
-            if y_position < 1.5 * inch:
-                c.showPage()
-                y_position = height - 0.75 * inch
+            check_space()
             if isinstance(cert, dict):
-                text = cert['name']
-                if 'link' in cert:
-                    text_width = c.stringWidth(text, "Helvetica", 10)
-                    c.linkURL(cert['link'], (left_margin, y_position, 
-                                       left_margin + text_width, y_position + line_height))
+                text = cert.get("name", "")
+                url = cert.get("link")
             else:
-                text = cert
-            c.drawString(left_margin, y_position, text)
-            y_position -= line_height
-        y_position -= line_height * 0.5
+                text = str(cert)
+                url = None
+            
+            if text:
+                c.drawString(left_margin, y_position, text)
+                if url:
+                    text_width = c.stringWidth(text, "Helvetica", 11)
+                    c.linkURL(url, (left_margin, y_position, 
+                                left_margin + text_width, y_position + line_height))
+                y_position -= line_height
+        
+        y_position -= line_height * 0.75
 
     # ---------- Languages ----------
-    if 'languages' in data:
+    if data.get("languages"):
         draw_section("Languages")
-        c.setFont("Helvetica", 10)
-        lang_str = " • ".join([
-            f"{lang['name']} ({lang['proficiency']})" if 'proficiency' in lang else lang['name'] 
-            for lang in data["languages"]
-        ])
-        if c.stringWidth(lang_str, "Helvetica", 10) > (width - 1.5*inch):
-            lang_lines = textwrap.wrap(lang_str, width=80)
-            for line in lang_lines:
+        c.setFont("Helvetica", 11)
+        
+        lang_items = []
+        for lang in data["languages"]:
+            if "name" not in lang:
+                continue
+            proficiency = lang.get("proficiency", "")
+            lang_items.append(f"{lang['name']}{f' ({proficiency})' if proficiency else ''}")
+        
+        if lang_items:
+            lang_str = " • ".join(lang_items)
+            if c.stringWidth(lang_str, "Helvetica", 11) > (width - 1.5*inch):
+                lines = textwrap.wrap(lang_str, width=80)
+            else:
+                lines = [lang_str]
+            
+            for line in lines:
+                check_space()
                 c.drawString(left_margin, y_position, line)
                 y_position -= line_height
-        else:
-            c.drawString(left_margin, y_position, lang_str)
-            y_position -= line_height
-        y_position -= line_height * 0.5
+            
+            y_position -= line_height * 0.75
 
     c.save()
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Generate PDF resume from JSON")
     parser.add_argument("json_file", help="Path to JSON resume file")
-    parser.add_argument("output_file", help="Output PDF file path", default="resume.pdf", nargs="?")
+    parser.add_argument("output_file", help="Output PDF path", default="resume.pdf", nargs="?")
     args = parser.parse_args()
     
     create_resume(args.json_file, args.output_file)
-    print(f"Resume generated successfully: {args.output_file}")
+    print(f"Resume generated: {args.output_file}")
