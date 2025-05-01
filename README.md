@@ -114,64 +114,151 @@ Languages
 
 
 # Example JSON Template
-
 {
-  "name": "Jane Doe",
-  "title": "Software Developer",
-  "email": "jane.doe@example.com",
-  "phone": "+1234567890",
-  "address": "New York, USA",
-  "linkedin": "https://linkedin.com/in/janedoe",
-  "github": "https://github.com/janedoe",
-  "professional_summary": "Passionate developer with experience in Python, AI, and scalable backend systems.",
-  "skills": ["Python", "Django", "Machine Learning", "Docker", "PostgreSQL"],
+  "name": "Debasis Sikdar",
+  "title": "Software Engineer (AI/ML)",
+  "address": "Airport Gate No. 1, Kolkata, WB – 700028",
+  "phone": "+91 7477 333 298",
+  "email": "debasis.sikder123@gmail.com",
+ "github": "https://github.com/DebasisX",
+ "leetcode": "https://leetcode.com/u/IncinerateX/", 
+ "linkedin": "https://www.linkedin.com/in/debasis-sikdar-4a197b25a/",
+  "professional_summary": "Passionate and results-driven Software Engineer with a strong foundation in AI/ML, full-stack development, and system-level programming. Proven leadership experience in community and project management, with a history of mentoring, contributing to open source, and delivering high-impact solutions. Strong problem-solving skills backed by academic excellence and hands-on projects.",
+  "skills": [
+    "Python",
+    "C/C++",
+    "Java",
+    "React.js",
+    "HTML",
+    "CSS",
+    "Bootstrap",
+    "Flask",
+    "Django",
+    "MongoDB",
+    "MySQL",
+    "SQLite",
+    "TensorFlow",
+    "Scikit-learn",
+    "Pandas",
+    "NumPy",
+    "Matplotlib",
+    "Git",
+    "VSCode",
+    "Jupyter",
+    "Linux",
+    "Google Cloud",
+    "Docker",
+    "Selenium"
+  ],
   "work_experience": [
     {
-      "company": "TechCorp",
-      "position": "Backend Developer",
-      "date": "2022 - Present",
-      "location": "Remote",
+      "company": "UiPath Community",
+      "position": "Development Team Lead",
+      "location": "On-Site",
+      "date": "Jan 2025 – Present",
       "bullets": [
-        "Developed REST APIs for fintech applications.",
-        "Integrated CI/CD pipelines and improved deployment efficiency."
+        "Lead development teams for hackathons and innovation challenges.",
+        "Spearheaded impactful tech projects by translating problem statements into functional applications."
+      ]
+    },
+    {
+      "company": "GirlScript Foundation",
+      "position": "Open Source Contributor",
+      "location": "Remote",
+      "date": "May 2024 – Jul 2024",
+      "bullets": [
+        "Successfully delivered a Level 3 PR during GSSoC.",
+        "Dockerized core application, optimizing the deployment process."
+      ]
+    },
+    {
+      "company": "Code Social",
+      "position": "Community Manager",
+      "location": "Remote",
+      "date": "Apr 2023 – Oct 2023",
+      "bullets": [
+        "Mentored 5,000+ members, driving a 15% boost in community engagement.",
+        "Orchestrated 5+ technical events and competitions to foster learning."
       ]
     }
-  ],
-  "education": {
-    "institution": "XYZ University",
-    "degree": "B.Sc. in Computer Science",
-    "duration": "2018 - 2022",
-    "location": "City, Country",
-    "gpa": "8.9 / 10"
-  },
+  ], "education": {
+       "institution": "KIIT University, Odisha",
+       "degree": "B.Tech in Computer Science and Engineering",
+       "duration": "2022-2026",
+       "location": "Bhubaneswar, Odisha",
+       "gpa": "7.97"
+     },
   "projects": [
     {
-      "name": "Resume PDF Generator",
-      "link": "https://github.com/janedoe/resume-gen",
+      "name": "KIRA KIIT – KIIT Intelligent Response Assistant",
       "bullets": [
-        "Automatically creates styled PDF resumes from structured JSON.",
-        "Used ReportLab for PDF layout and formatting."
+        "RAG-based AI chatbot for KIIT students.",
+        "24/7 assistant for academic/admin queries with secure OTP, CSRF, and rate limiting.",
+        "Tech: Flask, MongoDB, FAISS, Ollama, Mistral-7B, LangChain, Docker"
+      ]
+    },
+    {
+      "name": "ML Model for Hyperspace Classification",
+      "bullets": [
+        "Designed an adaptive classification model outperforming k-NN by 10% in runtime.",
+        "Used multi-feature selection for robust performance."
+      ]
+    },
+    {
+      "name": "Finance – Real-Time Trading Platform (CS50 Final Project)",
+      "bullets": [
+        "Simulates stock trading with real-time updates, secure login, portfolio tracking.",
+        "Tech: Flask, SQLite, Yahoo Finance API"
+      ]
+    },
+    {
+      "name": "DecisionHub – Rule-Based Decision Engine",
+      "bullets": [
+        "Parses user-defined logical rules and computes dynamic values accordingly.",
+        "Tech: Flask, SQLite, Jinja, HTML/CSS"
+      ]
+    },
+    {
+      "name": "Note-Ninja – Smart Meeting Summarizer",
+      "bullets": [
+        "Extracts and summarizes meeting content using Gemini AI and audio transcriptions.","Tech: Flask, Google Gemini, SpeechRecognition"
+      ]
+    },
+    {
+      "name": "ResLan – JSON-to-Resume Generator",
+      "bullets": [
+        "High-level JSON-based resume language to produce ATS-compliant PDFs.",
+        "Libraries: ReportLab, argparse, textwrap"
+      ]
+    },
+    {
+      "name": "Low-Level Systems Projects (C)",
+      "bullets": [
+        "USB Driver for Linux Kernel (SanDisk) with multi-threaded I/O for speed optimization.",
+        "Image Filters on .bmp (grayscale, edge detection, blur).",
+        "Custom C Library for Linked Lists & Graphs."
       ]
     }
   ],
   "achievements": [
-    "1st Place - XYZ Hackathon 2021",
-    "Dean’s List - 2020, 2021"
+    "Hack-A-Bot (USC.KIIT) – 3rd Place",
+    "CodeKaze (Coding Ninjas) – AIR 650",
+    "KIITEE – Rank 1644",
+    "CS50X & CS50 AI Graduate – Harvard University"
   ],
-  "certifications": [
-    {
-      "name": "Full Stack Web Development",
-      "link": "https://coursera.org/certificate/abc123"
-    }
-  ],
+  "certifications": [],
   "languages": [
     {
       "name": "English",
-      "proficiency": "Fluent"
+      "proficiency": ""
     },
     {
-      "name": "Spanish",
-      "proficiency": "Intermediate"
+      "name": "Hindi",
+      "proficiency": ""
+    },
+    {
+      "name": "Bengali",
+      "proficiency": ""
     }
   ]
 }
